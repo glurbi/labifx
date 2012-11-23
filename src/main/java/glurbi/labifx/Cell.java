@@ -11,8 +11,8 @@ import javafx.util.Duration;
 
 public class Cell extends Rectangle {
 
-    public static final double WIDTH = 10;
-    public static final double HEIGHT = 10;
+    public static final double WIDTH = 1.0;
+    public static final double HEIGHT = 1.0;
 
     public enum State {
         WALL,
@@ -25,14 +25,14 @@ public class Cell extends Rectangle {
     
     public Cell(int x, int y) {
         this.pos = new CellPos(x, y);
+        setX(x*WIDTH);
+        setY(y*HEIGHT);
         setWidth(WIDTH);
         setHeight(HEIGHT);
-        setStroke(Color.BLACK);
         setFill(Color.BLACK);
         setState(State.WALL);
         setOnMouseEntered(mouseEnteredEventHandler);
         setOnMouseExited(mouseExitedEventHandler);
-        relocate(pos.getX()*WIDTH, pos.getY()*HEIGHT);
     }
 
     public CellPos getPos() {

@@ -11,27 +11,26 @@ import javafx.stage.Stage;
 
 public class Testfx extends Application {
     
-    private final int X_CELL_COUNT = 100;
-    private final int Y_CELL_COUNT = 100;
+    private final int X_SIZE = 100;
+    private final int Y_SIZE = 100;
     
     @Override
     public void start(Stage primaryStage) {
         StackPane root = new StackPane();
         Scene scene = new Scene(root, 800, 600);
         
-        Map<CellPos, Cell> cells = new HashMap<CellPos, Cell>();
-        for (int x = 0; x < X_CELL_COUNT; x++) {
-            for (int y = 0; y < Y_CELL_COUNT; y++) {
+        Map<CellPos, Cell> cells = new HashMap<>();
+        for (int x = 0; x < X_SIZE; x++) {
+            for (int y = 0; y < Y_SIZE; y++) {
                 Cell cell = new Cell(x, y);
                 cells.put(cell.getPos(), cell);
             }
         }
         
-        LabiPane labi = new LabiPane(cells);
-        labi.setPrefSize(Cell.WIDTH*X_CELL_COUNT, Cell.HEIGHT*Y_CELL_COUNT);
-        labi.setMinSize(Cell.WIDTH*X_CELL_COUNT, Cell.HEIGHT*Y_CELL_COUNT);
-        labi.setMaxSize(Cell.WIDTH*X_CELL_COUNT, Cell.HEIGHT*Y_CELL_COUNT);
-        
+        Labi labi = new Labi(cells, X_SIZE, Y_SIZE);
+        labi.setScaleX(20);
+        labi.setScaleY(20);
+
         StackPane.setAlignment(root, Pos.CENTER);
         root.getChildren().add(labi);
 
