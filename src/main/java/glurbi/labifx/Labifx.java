@@ -12,51 +12,59 @@ import javafx.stage.Stage;
 
 public class Labifx extends Application {
 
+    private static final String WINDOW_MODE_MENU_ITEM = "Window mode";
+    private static final String FULL_SCREEN_MODE_MENU_ITEM = "Full Screen Mode";
+
     @Override
     public void start(final Stage primaryStage) {
         
-        /*
-        Runnable fullScreenAction = new Runnable() {
+        final Image sand = new Image(this.getClass().getResourceAsStream("sand.jpg"));
+        final ImageView background = ImageViewBuilder.create().image(sand).fitHeight(600).build();
+        final StackPane root = new StackPane();
+        final Menu mainMenu = new Menu();
+        final Menu optionsMenu = new Menu();
+        final Scene scene = new Scene(root, 800, 600);
+        
+        final Runnable fullScreenAction = new Runnable() {
             private boolean fullScreen = false;
             @Override
-            public void handle(MouseEvent t) {
+            public void run() {
                 fullScreen = !fullScreen;
                 primaryStage.setFullScreen(fullScreen);
                 if (fullScreen) {
-                    ((Text) t.getSource()).setText("Window mode");
+                    optionsMenu.renameEntry(FULL_SCREEN_MODE_MENU_ITEM, WINDOW_MODE_MENU_ITEM);
                 } else {
-                    ((Text) t.getSource()).setText("Full screen mode");
+                    optionsMenu.renameEntry(WINDOW_MODE_MENU_ITEM, FULL_SCREEN_MODE_MENU_ITEM);
                 }
             }
         };
-        */
 
-        Runnable exitAction = new Runnable() {
+        final Runnable exitAction = new Runnable() {
             @Override
             public void run() {
                 System.exit(0);
             }
         };
-
-        Menu mainMenu = new Menu();
-        mainMenu.addEntry("Play", new Runnable() { public void run() {}});
-        mainMenu.addEntry("Edit", new Runnable() { public void run() {}});
-        mainMenu.addEntry("Options", new Runnable() { public void run() {}});
-        mainMenu.addEntry("Exit", exitAction);
         
-        // TODO: report bug?
-        //final Text fullScreenText = menuItemBuilder.onMouseClicked(fullScreenHandler).text("Full screen mode").build();
-        //final Text fullScreenText = menuItemBuilder.text("Full screen mode").build();
-        //fullScreenText.setOnMouseClicked(fullScreenHandler);
-
-        final Image sand = new Image(this.getClass().getResourceAsStream("sand.jpg"));
-        final ImageView background = ImageViewBuilder.create().image(sand).fitHeight(600).build();
-        final StackPane root = new StackPane();
-        root.getChildren().addAll(background, mainMenu);
-        final Scene scene = new Scene(root, 800, 600);
-        primaryStage.setScene(scene);
+        final Runnable showOptionsMenuAction = new Runnable() {
+            @Override
+            public void run() {
+                if (root.getChildren().remove(mainMenu)) {
+                    root.getChildren().add(optionsMenu);
+                }
+            }
+        };
         
-        ChangeListener<Number> sizeListener = new ChangeListener<Number>() {
+        final Runnable showMainMenuAction = new Runnable() {
+            @Override
+            public void run() {
+                if (root.getChildren().remove(optionsMenu)) {
+                    root.getChildren().add(mainMenu);
+                }
+            }
+        };
+        
+        final ChangeListener<Number> sizeListener = new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                 double width = primaryStage.widthProperty().get();
@@ -66,6 +74,22 @@ public class Labifx extends Application {
             }
         };
         
+        root.getChildren().addAll(background, mainMenu);
+        primaryStage.setScene(scene);
+        
+        mainMenu.addEntry("Play", new Runnable() { public void run() {}});
+        mainMenu.addEntry("Edit", new Runnable() { public void run() {}});
+        mainMenu.addEntry("Options", showOptionsMenuAction);
+        mainMenu.addEntry("Exit", exitAction);
+        
+        optionsMenu.addEntry(FULL_SCREEN_MODE_MENU_ITEM, fullScreenAction);
+        optionsMenu.addEntry("Back to main menu...", showMainMenuAction);
+        
+        // TODO: report bug?
+        //final Text fullScreenText = menuItemBuilder.onMouseClicked(fullScreenHandler).text("Full screen mode").build();
+        //final Text fullScreenText = menuItemBuilder.text("Full screen mode").build();
+        //fullScreenText.setOnMouseClicked(fullScreenHandler);
+
         primaryStage.widthProperty().addListener(sizeListener);
         primaryStage.heightProperty().addListener(sizeListener);
         primaryStage.show();
@@ -76,3 +100,4 @@ public class Labifx extends Application {
     }
     
 }
+
