@@ -21,9 +21,9 @@ public class Labifx extends Application {
         final Image sand = new Image(this.getClass().getResourceAsStream("sand.jpg"));
         final ImageView background = ImageViewBuilder.create().image(sand).fitHeight(600).build();
         final StackPane root = new StackPane();
+        final Scene scene = new Scene(root, 800, 600);
         final Menu mainMenu = new Menu();
         final Menu optionsMenu = new Menu();
-        final Scene scene = new Scene(root, 800, 600);
         
         final Runnable fullScreenAction = new Runnable() {
             private boolean fullScreen = false;
@@ -49,18 +49,16 @@ public class Labifx extends Application {
         final Runnable showOptionsMenuAction = new Runnable() {
             @Override
             public void run() {
-                if (root.getChildren().remove(mainMenu)) {
-                    root.getChildren().add(optionsMenu);
-                }
+                mainMenu.uninstall(root);
+                optionsMenu.install(root);
             }
         };
         
         final Runnable showMainMenuAction = new Runnable() {
             @Override
             public void run() {
-                if (root.getChildren().remove(optionsMenu)) {
-                    root.getChildren().add(mainMenu);
-                }
+                optionsMenu.uninstall(root);
+                mainMenu.install(root);
             }
         };
         
@@ -74,7 +72,8 @@ public class Labifx extends Application {
             }
         };
         
-        root.getChildren().addAll(background, mainMenu);
+        root.getChildren().addAll(background);
+        mainMenu.install(root);
         primaryStage.setScene(scene);
         
         mainMenu.addEntry("Play", new Runnable() { public void run() {}});
