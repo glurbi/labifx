@@ -30,7 +30,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>glurbi.labifx.Testfx</mainClass>
+                            <mainClass>glurbi.labifx.Labifx</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

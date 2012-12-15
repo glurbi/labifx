@@ -12,7 +12,12 @@ import javafx.stage.Stage;
 
 public class Labifx extends Application {
 
-    private static final String WINDOW_MODE_MENU_ITEM = "Window mode";
+    private static final String BACK_TO_MAIN_MENU_MENU_ITEM = "Back to main menu...";
+	private static final String EXIT_MENU_ITEM = "Exit";
+	private static final String OPTIONS_MENU_ITEM = "Options";
+	private static final String EDIT_MENU_ITEM = "Edit";
+	private static final String PLAY_MENU_ITEM = "Play";
+	private static final String WINDOW_MODE_MENU_ITEM = "Window mode";
     private static final String FULL_SCREEN_MODE_MENU_ITEM = "Full Screen Mode";
 
     @Override
@@ -23,6 +28,8 @@ public class Labifx extends Application {
         final StackPane root = new StackPane();
         final Scene scene = new Scene(root, 800, 600);
         final Menu mainMenu = new Menu();
+        final Menu playMenu = new Menu();
+        final Menu editMenu = new Menu();
         final Menu optionsMenu = new Menu();
         
         final Runnable fullScreenAction = new Runnable() {
@@ -46,19 +53,17 @@ public class Labifx extends Application {
             }
         };
         
-        final Runnable showOptionsMenuAction = new Runnable() {
+        class SwapMenuAction implements Runnable {
+        	private final Menu from;
+        	private final Menu to;
+        	public SwapMenuAction(Menu from, Menu to) {
+        		this.from = from;
+        		this.to = to;
+        	}
             @Override
             public void run() {
-                mainMenu.uninstall(root);
-                optionsMenu.install(root);
-            }
-        };
-        
-        final Runnable showMainMenuAction = new Runnable() {
-            @Override
-            public void run() {
-                optionsMenu.uninstall(root);
-                mainMenu.install(root);
+                from.uninstall(root);
+                to.install(root);
             }
         };
         
@@ -76,13 +81,18 @@ public class Labifx extends Application {
         mainMenu.install(root);
         primaryStage.setScene(scene);
         
-        mainMenu.addEntry("Play", new Runnable() { public void run() {}});
-        mainMenu.addEntry("Edit", new Runnable() { public void run() {}});
-        mainMenu.addEntry("Options", showOptionsMenuAction);
-        mainMenu.addEntry("Exit", exitAction);
+        mainMenu.addEntry(PLAY_MENU_ITEM, new SwapMenuAction(mainMenu, playMenu));
+        mainMenu.addEntry(EDIT_MENU_ITEM, new SwapMenuAction(mainMenu, editMenu));
+        mainMenu.addEntry(OPTIONS_MENU_ITEM, new SwapMenuAction(mainMenu, optionsMenu));
+        mainMenu.addEntry(EXIT_MENU_ITEM, exitAction);
+
+        playMenu.addEntry(BACK_TO_MAIN_MENU_MENU_ITEM, new SwapMenuAction(playMenu, mainMenu));
+        
+        editMenu.addEntry("New Labyrinth...", new Runnable() { public void run() {}});
+        editMenu.addEntry(BACK_TO_MAIN_MENU_MENU_ITEM, new SwapMenuAction(editMenu, mainMenu));
         
         optionsMenu.addEntry(FULL_SCREEN_MODE_MENU_ITEM, fullScreenAction);
-        optionsMenu.addEntry("Back to main menu...", showMainMenuAction);
+        optionsMenu.addEntry(BACK_TO_MAIN_MENU_MENU_ITEM, new SwapMenuAction(optionsMenu, mainMenu));
         
         // TODO: report bug?
         //final Text fullScreenText = menuItemBuilder.onMouseClicked(fullScreenHandler).text("Full screen mode").build();
