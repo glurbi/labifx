@@ -1,23 +1,35 @@
 package glurbi.labifx;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.ImageViewBuilder;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class Labifx extends Application {
 
+    private static final String NEW_LABYRINTH_MENU_ITEM = "New Labyrinth...";
     private static final String BACK_TO_MAIN_MENU_MENU_ITEM = "Back to main menu...";
-	private static final String EXIT_MENU_ITEM = "Exit";
-	private static final String OPTIONS_MENU_ITEM = "Options";
-	private static final String EDIT_MENU_ITEM = "Edit";
-	private static final String PLAY_MENU_ITEM = "Play";
-	private static final String WINDOW_MODE_MENU_ITEM = "Window mode";
+    private static final String EXIT_MENU_ITEM = "Exit";
+    private static final String OPTIONS_MENU_ITEM = "Options";
+    private static final String EDIT_MENU_ITEM = "Edit";
+    private static final String PLAY_MENU_ITEM = "Play";
+    private static final String WINDOW_MODE_MENU_ITEM = "Window mode";
     private static final String FULL_SCREEN_MODE_MENU_ITEM = "Full Screen Mode";
 
     @Override
@@ -67,6 +79,55 @@ public class Labifx extends Application {
             }
         };
         
+        final Runnable newLabyrinthAction = new Runnable() {
+            @Override
+            public void run() {
+                final Stage dialogStage = new Stage();
+                dialogStage.initModality(Modality.WINDOW_MODAL);
+                GridPane grid = new GridPane();
+                Label widthLabel = new Label("Width:");
+                Label heightLabel = new Label("Height:");
+                TextField widthTextField = new TextField();
+                TextField heightTextField = new TextField();
+                grid.add(widthLabel, 0, 0);
+                grid.add(widthTextField, 1, 0);
+                grid.add(heightLabel, 0, 1);
+                grid.add(heightTextField, 1, 1);
+                HBox buttonsBox = new HBox();
+                Button okButton = new Button("OK");
+                okButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent arg0) {
+                        final int X_SIZE = 100;
+                        final int Y_SIZE = 100;
+                        Map<CellPos, Cell> cells = new HashMap<>();
+                        for (int x = 0; x < X_SIZE; x++) {
+                            for (int y = 0; y < Y_SIZE; y++) {
+                                Cell cell = new Cell(x, y);
+                                cells.put(cell.getPos(), cell);
+                            }
+                        }
+                        Labi labi = new Labi(cells, X_SIZE, Y_SIZE);
+                        labi.setScaleX(2);
+                        labi.setScaleY(2);
+                        root.getChildren().add(labi);
+                        dialogStage.hide();
+                    }
+                });
+                Button cancelButton = new Button("Cancel");
+                cancelButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent arg0) {
+                        dialogStage.hide();
+                    }
+                });
+                buttonsBox.getChildren().addAll(okButton, cancelButton);
+                grid.add(buttonsBox, 0, 2, 2, 1);
+                dialogStage.setScene(new Scene(grid));
+                dialogStage.show();
+            }
+        };
+        
         final ChangeListener<Number> sizeListener = new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
@@ -88,7 +149,7 @@ public class Labifx extends Application {
 
         playMenu.addEntry(BACK_TO_MAIN_MENU_MENU_ITEM, new SwapMenuAction(playMenu, mainMenu));
         
-        editMenu.addEntry("New Labyrinth...", new Runnable() { public void run() {}});
+        editMenu.addEntry(NEW_LABYRINTH_MENU_ITEM, newLabyrinthAction);
         editMenu.addEntry(BACK_TO_MAIN_MENU_MENU_ITEM, new SwapMenuAction(editMenu, mainMenu));
         
         optionsMenu.addEntry(FULL_SCREEN_MODE_MENU_ITEM, fullScreenAction);
