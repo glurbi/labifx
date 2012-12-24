@@ -23,14 +23,13 @@ public class Cell extends Rectangle {
     
     private State state;
     
-    public Cell(int x, int y) {
+    public Cell(int x, int y, State state) {
         this.pos = new CellPos(x, y);
         setX(x*WIDTH);
         setY(y*HEIGHT);
         setWidth(WIDTH);
         setHeight(HEIGHT);
-        setFill(Color.BLACK);
-        setState(State.WALL);
+        setState(state);
         setOnMouseEntered(mouseEnteredEventHandler);
         setOnMouseExited(mouseExitedEventHandler);
     }
@@ -41,6 +40,11 @@ public class Cell extends Rectangle {
     
     public final void setState(State state) {
         this.state = state;
+        switch (state) {
+        case WALL: setFill(Color.WHITE); break;
+        case EMPTY: setFill(Color.BLACK); break;
+        }
+        
     }
 
     private FadeTransition blink = FadeTransitionBuilder.create()

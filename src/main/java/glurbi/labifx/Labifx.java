@@ -1,5 +1,7 @@
 package glurbi.labifx;
 
+import glurbi.labifx.Cell.State;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -103,13 +105,22 @@ public class Labifx extends Application {
                         Map<CellPos, Cell> cells = new HashMap<>();
                         for (int x = 0; x < X_SIZE; x++) {
                             for (int y = 0; y < Y_SIZE; y++) {
-                                Cell cell = new Cell(x, y);
+                                Cell cell = new Cell(x, y, (x % 2 == 0 || y % 2 == 0) ? State.WALL : State.EMPTY);
                                 cells.put(cell.getPos(), cell);
                             }
                         }
-                        Labi labi = new Labi(cells, X_SIZE, Y_SIZE);
-                        labi.setScaleX(2);
-                        labi.setScaleY(2);
+                        final Labi labi = new Labi(cells, X_SIZE, Y_SIZE);
+                        labi.setScaleX(root.getWidth() / X_SIZE);
+                        labi.setScaleY(root.getHeight() / Y_SIZE);
+                        final ChangeListener<Number> sizeListener = new ChangeListener<Number>() {
+                            @Override
+                            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                                labi.setScaleX(root.getWidth() / X_SIZE);
+                                labi.setScaleY(root.getHeight() / Y_SIZE);
+                            }
+                        };
+                        root.widthProperty().addListener(sizeListener);
+                        root.heightProperty().addListener(sizeListener);
                         root.getChildren().add(labi);
                         dialogStage.hide();
                     }
