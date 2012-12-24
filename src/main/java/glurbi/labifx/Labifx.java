@@ -14,9 +14,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.ImageViewBuilder;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -37,10 +34,9 @@ public class Labifx extends Application {
     @Override
     public void start(final Stage primaryStage) {
         
-        final Image sand = new Image(this.getClass().getResourceAsStream("sand.jpg"));
-        final ImageView background = ImageViewBuilder.create().image(sand).fitHeight(600).build();
         final StackPane root = new StackPane();
         final Scene scene = new Scene(root, 800, 600);
+        root.setStyle("-fx-background-color: linear-gradient(#686868 0%, #232723 25%, #373837 75%, #757575 100%), linear-gradient(#020b02, #3a3a3a)");
         final Menu mainMenu = new Menu();
         final Menu playMenu = new Menu();
         final Menu editMenu = new Menu();
@@ -139,17 +135,6 @@ public class Labifx extends Application {
             }
         };
         
-        final ChangeListener<Number> sizeListener = new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                double width = primaryStage.widthProperty().get();
-                double height = primaryStage.heightProperty().get();
-                background.fitWidthProperty().set(width);
-                background.fitHeightProperty().set(height);
-            }
-        };
-        
-        root.getChildren().addAll(background);
         mainMenu.install(root);
         primaryStage.setScene(scene);
         
@@ -171,8 +156,6 @@ public class Labifx extends Application {
         //final Text fullScreenText = menuItemBuilder.text("Full screen mode").build();
         //fullScreenText.setOnMouseClicked(fullScreenHandler);
 
-        primaryStage.widthProperty().addListener(sizeListener);
-        primaryStage.heightProperty().addListener(sizeListener);
         primaryStage.show();
     }
 
