@@ -1,7 +1,5 @@
 package glurbi.labifx;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.Pane;
 
 class EditLabyrinthAction implements Runnable {
@@ -22,22 +20,7 @@ class EditLabyrinthAction implements Runnable {
     public void run() {
         from.uninstall(parent);
         final LabiModel labiModel = new LabiModel(width, height);
-        final LabiPane labiPane = new LabiPane(labiModel);
-        final ChangeListener<Number> sizeListener = new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                if (parent.getWidth() > parent.getHeight()) {
-                    labiPane.setScaleX(parent.getHeight() / height);
-                    labiPane.setScaleY(parent.getHeight() / height);
-                } else {
-                    labiPane.setScaleX(parent.getWidth() / width);
-                    labiPane.setScaleY(parent.getWidth() / width);
-                }
-            }
-        };
-        sizeListener.changed(null, null, null);
-        parent.widthProperty().addListener(sizeListener);
-        parent.heightProperty().addListener(sizeListener);
+        final LabiPane labiPane = new LabiPane(parent, labiModel);
         parent.getChildren().add(labiPane);
     }
     

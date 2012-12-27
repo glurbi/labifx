@@ -13,19 +13,40 @@ import javafx.scene.shape.VLineTo;
 
 public class LabiPane extends Pane {
 
+    private final ChangeListener<Number> sizeListener = new ChangeListener<Number>() {
+        @Override
+        public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+            if (parent.getWidth() > parent.getHeight()) {
+                setScaleX(parent.getHeight() / model.getHeight());
+                setScaleY(parent.getHeight() / model.getHeight());
+            } else {
+                setScaleX(parent.getWidth() / model.getWidth());
+                setScaleY(parent.getWidth() / model.getWidth());
+            }
+            walls.setStrokeWidth(1.0 / getScaleX());
+        }
+    };
+    
     private final LabiModel model;
+    private final Pane parent;
+    
     private Path walls;
     
-    public LabiPane(LabiModel model) {
+    public LabiPane(Pane parent, LabiModel model) {
         this.model = model;
-        setPrefSize(model.getWidth(), model.getHeight());
+        this.parent = parent;
         setMinSize(model.getWidth(), model.getHeight());
+        setPrefSize(model.getWidth(), model.getHeight());
         setMaxSize(model.getWidth(), model.getHeight());
-        init();
+        this.walls = createPath(model);
+        sizeListener.changed(null, null, null);
+        parent.widthProperty().addListener(sizeListener);
+        parent.heightProperty().addListener(sizeListener);
+        getChildren().add(walls);
     }
     
-    private void init() {
-        walls = new Path();
+    private Path createPath(LabiModel labiModel) {
+        Path walls = new Path();
         walls.setFill(Color.WHITE);
         walls.setStroke(Color.WHITE);
         for (int x = 0 ; x < model.getWidth(); x++) {
@@ -49,14 +70,7 @@ public class LabiPane extends Pane {
                 }
             }
         }
-        getChildren().add(walls);
-        scaleXProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-                walls.setStrokeWidth(1.0 / getScaleX());
-            }
-        });
-    }
-    
+        return walls;
+    }    
 
 }
