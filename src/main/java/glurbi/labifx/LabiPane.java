@@ -1,5 +1,7 @@
 package glurbi.labifx;
 
+import glurbi.labifx.LabiModel.Cell;
+import glurbi.labifx.LabiModel.Dir;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.Pane;
@@ -28,10 +30,23 @@ public class LabiPane extends Pane {
         walls.setStroke(Color.WHITE);
         for (int x = 0 ; x < model.getWidth(); x++) {
             for (int y = 0; y < model.getHeight(); y++) {
-                walls.getElements().add(new MoveTo(x, y));
-                walls.getElements().add(new HLineTo(x+1));
-                walls.getElements().add(new MoveTo(x, y));
-                walls.getElements().add(new VLineTo(y+1));
+                Cell cell = model.getCell(x, y);
+                if (cell.walls.contains(Dir.NORTH)) {
+                    walls.getElements().add(new MoveTo(x, y));
+                    walls.getElements().add(new HLineTo(x+1));
+                }
+                if (cell.walls.contains(Dir.SOUTH)) {
+                    walls.getElements().add(new MoveTo(x, y+1));
+                    walls.getElements().add(new HLineTo(x+1));
+                }
+                if (cell.walls.contains(Dir.EAST)) {
+                    walls.getElements().add(new MoveTo(x, y));
+                    walls.getElements().add(new VLineTo(y+1));
+                }
+                if (cell.walls.contains(Dir.WEST)) {
+                    walls.getElements().add(new MoveTo(x+1, y));
+                    walls.getElements().add(new VLineTo(y+1));
+                }
             }
         }
         getChildren().add(walls);

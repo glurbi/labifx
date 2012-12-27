@@ -1,17 +1,24 @@
 package glurbi.labifx;
 
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
 public class LabiModel {
 
+    public static enum Dir {
+        NORTH, SOUTH, EAST, WEST
+    }
+    
     public static class Cell {
-        public boolean isWall() {
-            return true;
+        public EnumSet<Dir> walls;
+        public Cell(Dir... dirs) {
+            this.walls = EnumSet.copyOf(Arrays.asList(dirs));
         }
     }
     
-    public class Pos {
+    public static class Pos {
         public final int x;
         public final int y;
         public Pos(int x, int y) {
@@ -67,10 +74,14 @@ public class LabiModel {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 Pos pos = new Pos(x, y);
-                Cell cell = new Cell();
+                Cell cell = new Cell(Dir.values());
                 cells.put(pos, cell);
             }
         }
+    }
+    
+    public Cell getCell(int x, int y) {
+        return cells.get(new Pos(x, y));
     }
     
 }
