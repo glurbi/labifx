@@ -38,15 +38,14 @@ public class LabiPane extends Pane {
         setMinSize(model.getWidth(), model.getHeight());
         setPrefSize(model.getWidth(), model.getHeight());
         setMaxSize(model.getWidth(), model.getHeight());
-        this.walls = createPath(model);
         sizeListener.changed(null, null, null);
         parent.widthProperty().addListener(sizeListener);
         parent.heightProperty().addListener(sizeListener);
         getChildren().add(walls);
     }
     
-    private Path createPath(LabiModel labiModel) {
-        Path walls = new Path();
+    public void updatePath() {
+        this.walls = new Path();
         walls.setFill(Color.WHITE);
         walls.setStroke(Color.WHITE);
         for (int x = 0 ; x < model.getWidth(); x++) {
@@ -70,7 +69,6 @@ public class LabiPane extends Pane {
                 }
             }
         }
-        return walls;
     }    
 
 }

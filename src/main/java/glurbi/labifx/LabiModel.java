@@ -1,14 +1,28 @@
 package glurbi.labifx;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-public class LabiModel {
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 
-    public static enum Dir {
-        NORTH, SOUTH, EAST, WEST
+public class LabiModel implements Observable {
+
+    private static enum Dir {
+        NORTH(0,-1), SOUTH(0,+1), EAST(+1,0), WEST(-1,0);
+        Dir(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+        public final int x;
+        public final int y;
     }
     
     public static class Cell {
@@ -54,11 +68,13 @@ public class LabiModel {
     private final Map<Pos, Cell> cells;
     private final int width;
     private final int height;
+    private final List<InvalidationListener> invalidationListeners;
 
     public LabiModel(int width, int height) {
         this.width = width;
         this.height = height;
         this.cells = new HashMap<>();
+        this.invalidationListeners = new ArrayList<>();
         init(width, height);
     }
 
@@ -84,4 +100,38 @@ public class LabiModel {
         return cells.get(new Pos(x, y));
     }
     
+    public void createRandomLabyrinth() {
+        Set<Pos> visited = new HashSet<>();
+        
+        notifyInvalidated();
+    }
+    
+    private List<Pos> getUnvisitedNeighborsShuffled(Pos p, Set<Pos> visited) {
+        List<Pos> l = new ArrayList<>();
+        for (Dir d : Dir.values()) {
+            Pos neighborPos = new Pos(p.x+d.x, p.y+d.y);
+            if (cells.get(neighborPos) != null && !visited.contains(neighborPos)) {
+                l.add(neighborPos);
+            }
+        }
+        Collections.shuffle(l);
+        return l;
+    }
+
+    
+    private void notifyInvalidated() {
+        for (InvalidationListener il : invalidationListeners) {
+            il.invalidated(this);
+        }
+    }
+    
+    @Override
+    public void addListener(InvalidationListener il) {
+        invalidationListeners.add(il);
+    }
+
+    @Override
+    public void removeListener(InvalidationListener il) {
+        invalidationListeners.remove(il);
+    }
 }
