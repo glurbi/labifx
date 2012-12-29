@@ -1,7 +1,8 @@
 package glurbi.labifx;
 
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -20,21 +21,28 @@ class EditLabyrinthAction implements Runnable {
         this.height = height;
     }
     
+    
+    
     @Override
     public void run() {
         from.uninstall(parent);
-        final LabiModel labiModel = new LabiModel(width, height);
-        final LabiPane labiPane = new LabiPane(parent, labiModel);
-        final AnchorPane controlPane = new AnchorPane();
-        final VBox buttonsBox = new VBox();
-        final ToggleGroup editModeGroup = new ToggleGroup();
-        final ToggleButton tb1 = new ToggleButton("B1");
-        tb1.setToggleGroup(editModeGroup);
-        tb1.setSelected(true);
-        final ToggleButton tb2 = new ToggleButton("B2");
-        tb1.setToggleGroup(editModeGroup);
-        buttonsBox.getChildren().addAll(tb1, tb2);
-        tb1.setSelected(false);
+        LabiModel labiModel = new LabiModel(width, height);
+        LabiPane labiPane = new LabiPane(parent, labiModel);
+        AnchorPane controlPane = new AnchorPane();
+        VBox buttonsBox = new VBox();
+        buttonsBox.setSpacing(10);
+        Button createRandomLabyrinthButton = new Button("Random");
+        createRandomLabyrinthButton.setMaxWidth(Double.MAX_VALUE);
+        Button backToNewLabyrinthMenu = new Button("Back...");
+        backToNewLabyrinthMenu.setMaxWidth(Double.MAX_VALUE);
+        backToNewLabyrinthMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent arg0) {
+                parent.getChildren().clear();
+                from.install(parent);
+            }
+        });
+        buttonsBox.getChildren().addAll(createRandomLabyrinthButton, backToNewLabyrinthMenu);
         controlPane.getChildren().add(buttonsBox);
         AnchorPane.setLeftAnchor(buttonsBox, 10.0);
         AnchorPane.setTopAnchor(buttonsBox, 10.0);
