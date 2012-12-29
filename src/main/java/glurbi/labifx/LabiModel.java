@@ -15,8 +15,8 @@ import javafx.beans.Observable;
 
 public class LabiModel implements Observable {
 
-    private static enum Dir {
-        NORTH(0,-1), SOUTH(0,+1), EAST(+1,0), WEST(-1,0);
+    public static enum Dir {
+        NORTH(0,-1), EAST(+1,0), SOUTH(0,+1), WEST(-1,0);
         Dir(int x, int y) {
             this.x = x;
             this.y = y;
@@ -29,6 +29,23 @@ public class LabiModel implements Observable {
         public EnumSet<Dir> walls;
         public Cell(Dir... dirs) {
             this.walls = EnumSet.copyOf(Arrays.asList(dirs));
+        }
+        @Override
+        public String toString() {
+            return "Cell [walls=" + walls + "]";
+        }
+    }
+    
+    public static class Neighbor {
+        public final Pos pos;
+        public final Dir dir;
+        public Neighbor(Pos pos, Dir dir) {
+            this.pos = pos;
+            this.dir = dir;
+        }
+        @Override
+        public String toString() {
+            return "Neighbor [pos=" + pos + ", dir=" + dir + "]";
         }
     }
     
@@ -62,6 +79,10 @@ public class LabiModel implements Observable {
                 return false;
             }
             return true;
+        }
+        @Override
+        public String toString() {
+            return "Pos [x=" + x + ", y=" + y + "]";
         }
     }
     
@@ -101,24 +122,44 @@ public class LabiModel implements Observable {
     }
     
     public void createRandomLabyrinth() {
+        init(width, height);
         Set<Pos> visited = new HashSet<>();
-        
+        visit(new Pos(0,0), visited);
         notifyInvalidated();
     }
     
-    private List<Pos> getUnvisitedNeighborsShuffled(Pos p, Set<Pos> visited) {
-        List<Pos> l = new ArrayList<>();
+    private void visit(Pos p, Set<Pos> visited) {
+        visited.add(p);
+        List<Neighbor> neighbors = getUnvisitedNeighborsShuffled(p, visited);
+        for (Neighbor n : neighbors) {
+            if (visited.contains(n.pos)) {
+                continue;
+            }
+            removeWall(p, n.dir, n.pos);
+            visit(n.pos, visited);
+        }
+    }
+    
+    private void removeWall(Pos p1, Dir d, Pos p2) {
+        Cell c1 = cells.get(p1);
+        c1.walls.remove(d);
+        Cell c2 = cells.get(p2);
+        Dir opposite = Dir.values()[(d.ordinal()+2)%4];
+        c2.walls.remove(opposite);
+    }
+    
+    private List<Neighbor> getUnvisitedNeighborsShuffled(Pos p, Set<Pos> visited) {
+        List<Neighbor> l = new ArrayList<>();
         for (Dir d : Dir.values()) {
             Pos neighborPos = new Pos(p.x+d.x, p.y+d.y);
             if (cells.get(neighborPos) != null && !visited.contains(neighborPos)) {
-                l.add(neighborPos);
+                l.add(new Neighbor(neighborPos, d));
             }
         }
         Collections.shuffle(l);
         return l;
     }
 
-    
     private void notifyInvalidated() {
         for (InvalidationListener il : invalidationListeners) {
             il.invalidated(this);

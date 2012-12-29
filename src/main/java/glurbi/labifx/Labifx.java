@@ -84,8 +84,8 @@ public class Labifx extends Application {
         optionsMenu.addEntry(BACK_TO_MAIN_MENU_MENU_ITEM, new SwapMenuAction(optionsMenu, mainMenu));
         
         newLabyrinthMenu.addEntry(SMALL_SIZE_MENU_ITEM, new EditLabyrinthAction(root, newLabyrinthMenu, 20, 20));
-        newLabyrinthMenu.addEntry(MEDIUM_SIZE_MENU_ITEM, new EditLabyrinthAction(root, newLabyrinthMenu, 50, 50));
-        newLabyrinthMenu.addEntry(LARGE_SIZE_MENU_ITEM, new EditLabyrinthAction(root, newLabyrinthMenu, 100, 100));
+        newLabyrinthMenu.addEntry(MEDIUM_SIZE_MENU_ITEM, new EditLabyrinthAction(root, newLabyrinthMenu, 40, 40));
+        newLabyrinthMenu.addEntry(LARGE_SIZE_MENU_ITEM, new EditLabyrinthAction(root, newLabyrinthMenu, 80, 80));
         newLabyrinthMenu.addEntry(BACK_TO_EDIT_MENU_MENU_ITEM, new SwapMenuAction(newLabyrinthMenu, editMenu));
         
         // TODO: report bug?

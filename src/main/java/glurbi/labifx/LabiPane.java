@@ -2,6 +2,8 @@ package glurbi.labifx;
 
 import glurbi.labifx.LabiModel.Cell;
 import glurbi.labifx.LabiModel.Dir;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.Pane;
@@ -27,6 +29,13 @@ public class LabiPane extends Pane {
         }
     };
     
+    private final InvalidationListener modelInvalidationListener = new InvalidationListener() {
+        @Override
+        public void invalidated(Observable arg0) {
+            updatePath();
+        }
+    };
+    
     private final LabiModel model;
     private final Pane parent;
     
@@ -35,13 +44,13 @@ public class LabiPane extends Pane {
     public LabiPane(Pane parent, LabiModel model) {
         this.model = model;
         this.parent = parent;
+        updatePath();
         setMinSize(model.getWidth(), model.getHeight());
         setPrefSize(model.getWidth(), model.getHeight());
         setMaxSize(model.getWidth(), model.getHeight());
-        sizeListener.changed(null, null, null);
         parent.widthProperty().addListener(sizeListener);
         parent.heightProperty().addListener(sizeListener);
-        getChildren().add(walls);
+        model.addListener(modelInvalidationListener);
     }
     
     public void updatePath() {
@@ -60,15 +69,18 @@ public class LabiPane extends Pane {
                     walls.getElements().add(new HLineTo(x+1));
                 }
                 if (cell.walls.contains(Dir.EAST)) {
-                    walls.getElements().add(new MoveTo(x, y));
+                    walls.getElements().add(new MoveTo(x+1, y));
                     walls.getElements().add(new VLineTo(y+1));
                 }
                 if (cell.walls.contains(Dir.WEST)) {
-                    walls.getElements().add(new MoveTo(x+1, y));
+                    walls.getElements().add(new MoveTo(x, y));
                     walls.getElements().add(new VLineTo(y+1));
                 }
             }
         }
+        getChildren().clear();
+        getChildren().add(walls);
+        sizeListener.changed(null, null, null);
     }    
 
 }
