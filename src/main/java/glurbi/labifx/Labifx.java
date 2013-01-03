@@ -66,6 +66,21 @@ public class Labifx extends Application {
             }
         };
         
+        class EditLabyrinthAction implements Runnable {
+            private final Menu from;
+            private final LabiModel model;
+            public EditLabyrinthAction(Menu from, LabiModel model) {
+                this.from = from;
+                this.model = model;
+            }
+            @Override
+            public void run() {
+                from.uninstall(root);
+                LabiEditorPane labiEditorPane = new LabiEditorPane(root, from, model);
+                root.getChildren().addAll(labiEditorPane);
+            }
+        };
+        
         root.setStyle("-fx-background-color: linear-gradient(#686868 0%, #232723 25%, #373837 75%, #757575 100%), linear-gradient(#020b02, #3a3a3a)");
         mainMenu.install(root);
         primaryStage.setScene(scene);
@@ -83,9 +98,9 @@ public class Labifx extends Application {
         optionsMenu.addEntry(FULL_SCREEN_MODE_MENU_ITEM, fullScreenAction);
         optionsMenu.addEntry(BACK_TO_MAIN_MENU_MENU_ITEM, new SwapMenuAction(optionsMenu, mainMenu));
         
-        newLabyrinthMenu.addEntry(SMALL_SIZE_MENU_ITEM, new EditLabyrinthAction(root, newLabyrinthMenu, 20, 20));
-        newLabyrinthMenu.addEntry(MEDIUM_SIZE_MENU_ITEM, new EditLabyrinthAction(root, newLabyrinthMenu, 40, 40));
-        newLabyrinthMenu.addEntry(LARGE_SIZE_MENU_ITEM, new EditLabyrinthAction(root, newLabyrinthMenu, 80, 80));
+        newLabyrinthMenu.addEntry(SMALL_SIZE_MENU_ITEM, new EditLabyrinthAction(newLabyrinthMenu, new LabiModel(20, 20)));
+        newLabyrinthMenu.addEntry(MEDIUM_SIZE_MENU_ITEM, new EditLabyrinthAction(newLabyrinthMenu, new LabiModel(40, 40)));
+        newLabyrinthMenu.addEntry(LARGE_SIZE_MENU_ITEM, new EditLabyrinthAction(newLabyrinthMenu, new LabiModel(80, 80)));
         newLabyrinthMenu.addEntry(BACK_TO_EDIT_MENU_MENU_ITEM, new SwapMenuAction(newLabyrinthMenu, editMenu));
         
         // TODO: report bug?
